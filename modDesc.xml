@@ -6,6 +6,7 @@
 
     <title>
 		<en>Contract HUD</en>
+	    	<pl>HUD kontraktów</pl>
 	</title>
 
 	<iconFilename>modIcon.dds</iconFilename>
@@ -50,6 +51,36 @@ Version 1.2.0.7: (the.geremy)
 - formating number error fixed
 
 ]]></en>
+		<pl><![CDATA[Pomocny mały HUD wyświetlający bieżący procent ukończenia wszystkich aktywnych umów
+Skróty klawiaturowe:
+ALT + M - Przełączanie między 6 możliwymi trybami (tryb wyświetlania 0 jest domyślny)
+
+Wersja 1.2.1.0: (the.geremy)
+poprawiono błąd, gdy pogoda ma dwie ikony i nakładka się nie dostosuje
+dodano czas alarmowy, gdy pozostały czas misji jest poniżej tej wartości, kolor umowy się zmieni
+gdy pozostały czas misji jest poniżej 1 minuty, kolor również się zmieni
+poziome marginesy nakładki są nieco większe
+tryb wyświetlania 5 jest bardziej rozmowny (domyślny)
+teraz można wybrać spośród tych trybów wyświetlania:
+0 - misja polowa - wyświetl numer pola i rodzaj pracy polowej oraz typ uprawy, jeśli jest dostępny, jeśli postęp, pasek wyświetlający postęp
+- misja transportowa - wyświetla typ misji i typ uprawy, jeśli postęp, wyświetlany jest pasek postępu zamiast pozostałego czasu
+1 - misja polowa - wyświetla numer pola i rodzaj pracy polowej oraz typ uprawy, jeśli jest dostępny, jeśli postęp, wyświetlany jest procent postępu zamiast wymaganej ilości
+2 - misja polowa - wyświetla numer pola i rodzaj pracy polowej oraz typ uprawy, jeśli jest dostępny, jeśli postęp, wyświetlany jest procentowy numer i pasek postępu
+- misja transportowa - wyświetla typ misji i typ uprawy, jeśli postęp, wyświetlany jest procentowy numer i pasek postępu zamiast wymaganej ilości
+3 - misja polowa - wyświetla numer pola i rodzaj pracy polowej oraz typ uprawy, jeśli jest dostępny, jeśli postęp, wyświetlany jest procentowy numer i pasek postępu
+- misja transportowa - wyświetla typ uprawy, jeśli postęp, wyświetlany jest procentowy numer zamiast wymaganej ilości, wyświetlany jest również cel
+4 - misja polowa - wyświetla numer pola i rodzaj pracy polowej oraz typ uprawy, jeśli jest dostępny, jeśli postęp, wyświetlany jest procentowy numer i pasek postępu
+- misja transportowa - wyświetla typ uprawy, jeśli postęp, wyświetlany jest procentowy numer zamiast wymaganej ilości, wyświetlany jest również cel i pozostały czas
+5 - misja polowa - wyświetla numer pola i rodzaj pracy polowej oraz typ uprawy, jeśli jest dostępny, jeśli postęp, wyświetlany jest procentowy numer i pasek postępu (domyślnie)
+- misja transportowa - wyświetla typ uprawy, jeśli postęp, wyświetlany jest pozostały czas zamiast wymaganej ilości, wyświetlany jest również cel i pozostały czas (domyślnie)
+6 = ukryj HUD
+
+Wersja 1.2.0.8: (the.geremy)
+kilka drobnych dostosowań
+
+Wersja 1.2.0.7: (the.geremy)
+naprawiono błąd w formatowaniu liczby
+]]></pl>
     </description>
 
 	<extraSourceFiles>
@@ -61,16 +92,19 @@ Version 1.2.0.7: (the.geremy)
 			<de><![CDATA[Contract HUD umschalten]]></de>
 			<en><![CDATA[Contract HUD toggle]]></en>
             <cz><![CDATA[Contract HUD režim]]></cz>
+			<pl><![CDATA[przełącz HUD kontraktów]]></pl>
 		</text>
         <text name="CH_field">
             <de><![CDATA[Feld]]></de>
             <en><![CDATA[Field]]></en>
             <cz><![CDATA[Pole]]></cz>
+	    <pl><![CDATA[Pole]]></pl>
         </text>        
         <text name="CH_supply">
             <de><![CDATA[Lieferung]]></de>
             <en><![CDATA[Supply]]></en>
             <cz><![CDATA[Dodávka]]></cz>
+	    <pl><![CDATA[Dostawa]]></pl>
         </text>
 	</l10n>
 
