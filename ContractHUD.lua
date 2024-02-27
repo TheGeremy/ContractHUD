@@ -48,6 +48,7 @@ ContractHUD.displayDecimals = true -- display or not display decimal in percenta
 ContractHUD.shortTime = true -- true => 15:40, false => 15:40:26
 ContractHUD.alertTime = 60 -- alert time in minutes, when remianing time less than specified minutes, change color of contract to alert_color
 -- !!! To change these, may have unexpected effects !!!
+ContractHUD.seperationWidth = 20 -- value in pixels, is scaled to match screen size
 ContractHUD.defaultOverlayWidth = 0.06
 ContractHUD.horizontalMargin = 0.0032
 ContractHUD.verticalMargin = 0.0008
@@ -97,24 +98,30 @@ end
 function ContractHUD:draw()
 	-- added condition to display info only if any active mission (the.geremy)
 	if g_client ~= nil and g_currentMission.hud.isVisible and ContractHUD.displayMode ~= 6 and ContractHUD.activeMissons ~= 0 and not g_noHudModeEnabled and not g_sleepManager:getIsSleeping() then
+		local gameInfoDisplay = g_currentMission.hud.gameInfoDisplay
 
-		local posX = g_currentMission.hud.gameInfoDisplay.backgroundOverlay.overlay.x
-		local posY = g_currentMission.hud.gameInfoDisplay.backgroundOverlay.overlay.y
-		local size = g_currentMission.inGameMenu.hud.inputHelp.helpTextSize * 1.1 -- add 10%
-		posY = posY + g_currentMission.hud.gameInfoDisplay.backgroundOverlay.overlay.height - size
+		local posX = gameInfoDisplay.backgroundOverlay.overlay.x
+		local posY = gameInfoDisplay.backgroundOverlay.overlay.y
+		local textSize = g_currentMission.inGameMenu.hud.inputHelp.helpTextSize * 1.1 -- add 10%
+		posY = posY + gameInfoDisplay.backgroundOverlay.overlay.height - textSize
 		posX = posX - ( g_currentMission.inGameMenu.hud.inputHelp.helpTextOffsetY * 2 )
 
+		if g_modIsLoaded.FS22_limitedDailyIncome then
+			posY = posY - gameInfoDisplay:getHeight() - gameInfoDisplay:scalePixelToScreenHeight(ContractHUD.seperationWidth)
+		end
+
 		local outputText = ContractHUD:translate("headline") .. ": " .. ContractHUD.activeMissons
+		local lineHeight = getTextHeight(textSize, outputText)
 		local completion = 0
 		local countContracts = 0
 
 		local field_text = ""
 		local field_work = ""
-		local fruitTypeName = ""
+		local textColor
 
 		-- for boxOverlay
 		local baseX = posX
-		local baseY = g_currentMission.hud.gameInfoDisplay.backgroundOverlay.overlay.y + g_currentMission.hud.gameInfoDisplay.backgroundOverlay.overlay.height
+		local baseY = gameInfoDisplay.backgroundOverlay.overlay.y + gameInfoDisplay.backgroundOverlay.overlay.height
 		local maxTextWidth = 0.0
 
 		if ContractHUD.baseX ~= baseX then
@@ -123,9 +130,9 @@ function ContractHUD:draw()
 		end
 
 		-- print haadline
-		ContractHUD:renderText(posX, posY, size, outputText, false, ContractHUD.HeadlineColor)--FSBaseMission.INGAME_NOTIFICATION_INFO) --ContractHUD.HeadlineColor)
-		maxTextWidth = getTextWidth(size, outputText)
-		posY = posY - size  -- shift one line down because of headline
+		ContractHUD:renderText(posX, posY, textSize, outputText, false, ContractHUD.HeadlineColor)--FSBaseMission.INGAME_NOTIFICATION_INFO) --ContractHUD.HeadlineColor)
+		maxTextWidth = getTextWidth(textSize, outputText)
+		posY = posY - textSize  -- shift one line down because of headline
 
 		for _, contract in ipairs(g_missionManager.missions) do
 			if contract.status >= 1 and g_currentMission.player.farmId == contract.farmId then  -- only show active contracts, 0 is inactive i guess, and only from current farm
@@ -171,13 +178,13 @@ function ContractHUD:draw()
 
 				if ContractHUD.displayMode == 0 then
 					if contract.type.name == "supplyTransport" then
-						if completion == 0 then -- when 0%, display remianing time
+						if completion == 0 then -- when 0%, display remaining time
 							outputText = field_text .. " - " .. field_work .. " - " .. ContractHUD:getRemainingTime(contract)
 						else -- else progress bar
 							outputText = field_text .. " - " .. field_work .. " " .. ContractHUD:buildProgressBar(completion)
 						end
 					else -- other then supplyTransport contracts
-						if completion == 0 then -- when 0%, display fuit type title
+						if completion == 0 then -- when 0%, display fruit type title
 							if contract.type.name == "sow" then
 								outputText = field_text .. " - " .. field_work .. " - " .. ContractHUD:getFruitTypeName(contract.fruitType)
 							elseif contract.type.name == "harvest" then
@@ -299,44 +306,38 @@ function ContractHUD:draw()
 					end
 				end
 
-				ContractHUD:renderText(posX, posY, size, outputText, false, textColor)
+				ContractHUD:renderText(posX, posY, textSize, outputText, false, textColor)
 
-				posY = posY - size  -- shift one line down
+				posY = posY - textSize  -- shift one line down
 
 				-- handle counting
 				countContracts = countContracts + 1
 
 				-- get max width of the text
-				if getTextWidth(size, outputText) > maxTextWidth then
-					maxTextWidth = getTextWidth(size, outputText)
+				if maxTextWidth < getTextWidth(textSize, outputText)  then
+					maxTextWidth = getTextWidth(textSize, outputText)
 				end
 			end
 		end
 
 		local overlayX = 0
 		local overlayY = 0
-		local overlayWidth = 0
-		local overlayHeight = 0
+		local overlayWidth = math.max(maxTextWidth + ContractHUD.horizontalMargin * 2, ContractHUD.defaultOverlayWidth)
+		local overlayHeight = math.max(textSize * (countContracts + 1) + ContractHUD.verticalMargin + g_currentMission.inGameMenu.hud.inputHelp.helpTextOffsetY, gameInfoDisplay.backgroundOverlay.overlay.height)
+
+		overlayX = baseX - overlayWidth + ContractHUD.horizontalMargin
+		overlayY = baseY - overlayHeight
+
+		if g_modIsLoaded.FS22_limitedDailyIncome then
+			overlayY = overlayY - gameInfoDisplay:getHeight() - gameInfoDisplay:scalePixelToScreenHeight(ContractHUD.seperationWidth)
+		end
 
 		-- draw overlay if not exists
 		if not ContractHUD.overlayIsRendered then
-			overlayWidth = maxTextWidth + ContractHUD.horizontalMargin*2
-			if overlayWidth < ContractHUD.defaultOverlayWidth then
-				overlayWidth = ContractHUD.defaultOverlayWidth
-			end
-
-			overlayHeight = size * (countContracts + 1) + ContractHUD.verticalMargin + g_currentMission.inGameMenu.hud.inputHelp.helpTextOffsetY
-			if overlayHeight < g_currentMission.hud.gameInfoDisplay.backgroundOverlay.overlay.height then
-			   overlayHeight = g_currentMission.hud.gameInfoDisplay.backgroundOverlay.overlay.height
-			end
-
-			overlayX = baseX - overlayWidth + ContractHUD.horizontalMargin
-			overlayY = baseY - overlayHeight
-
 			ContractHUD.overlay = ContractHUD.createImageOverlay(ContractHUD.background, overlayX, overlayY, overlayWidth, overlayHeight)
 			ContractHUD.overlay:setUVs(g_currentMission.hud.gameInfoDisplay.backgroundOverlay.overlay.uvs)
 			ContractHUD.overlay:setColor(unpack(self.Colors[2][2]))
-			g_currentMission.hud.gameInfoDisplay:addChild(ContractHUD.overlay)
+			gameInfoDisplay:addChild(ContractHUD.overlay)
 			ContractHUD.overlayIsRendered = true
 
 		elseif math.abs(ContractHUD.maxTextWidth - maxTextWidth) > ContractHUD.horizontalMargin/2 -- when maxTextWidth change more than half of the horizontal margin
@@ -345,18 +346,6 @@ function ContractHUD:draw()
 			  or ContractHUD.baseXchanged -- when weather is about to change
 			then -- move or adjust size of overlay
 
-			overlayWidth = maxTextWidth + ContractHUD.horizontalMargin*2
-			if overlayWidth < ContractHUD.defaultOverlayWidth then
-				overlayWidth = ContractHUD.defaultOverlayWidth
-			end
-
-			overlayHeight = size * (countContracts + 1) + ContractHUD.verticalMargin + g_currentMission.inGameMenu.hud.inputHelp.helpTextOffsetY
-			if overlayHeight < g_currentMission.hud.gameInfoDisplay.backgroundOverlay.overlay.height then
-			   overlayHeight = g_currentMission.hud.gameInfoDisplay.backgroundOverlay.overlay.height
-			end
-
-			overlayX = baseX - overlayWidth + ContractHUD.horizontalMargin
-			overlayY = baseY - overlayHeight
 			ContractHUD.overlay:setPosition(overlayX, overlayY)
 			ContractHUD.overlay:setDimension(overlayWidth, overlayHeight)
 
@@ -376,9 +365,7 @@ function ContractHUD:draw()
 end
 
 function ContractHUD.createImageOverlay(texturePath, baseX, baseY, baseWidth, baseHeight)
-
 	return HUDElement.new(Overlay.new(texturePath, baseX, baseY, baseWidth, baseHeight))
-
 end
 
 function ContractHUD:translate(text)
@@ -406,7 +393,7 @@ function ContractHUD:translate(text)
 	elseif text == "fertilize" then
 		result = g_currentMission.hud.l10n.texts.fieldJob_jobType_fertilizing
 	elseif text == "transport" then
-		result = ContractHUD.TransportDisplay and g_currentMission.hud.l10n.texts.fieldJob_jobType_transporting or g_i18n:getText("CH_supply") 
+		result = ContractHUD.TransportDisplay and g_currentMission.hud.l10n.texts.fieldJob_jobType_transporting or g_i18n:getText("CH_supply")
 	else
 		result = "N/A"
 	end

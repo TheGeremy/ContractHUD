@@ -2,7 +2,8 @@
 <modDesc descVersion="63">
 
     <author>StingerTopGun, the.geremy</author>
-    <version>1.2.1.0</version>
+    <contributors>tn4799</contributors>
+    <version>1.2.2.0</version>
 
     <title>
 		<en>Contract HUD</en>
@@ -21,6 +22,9 @@ ALT + M  -  Schalte zwischen 6 Anzeigemöglichkeiten (Voll, keine Fortschrittsba
 
 Hotkeys:
 ALT + M  -  Toggle between 6 possible modes (display mode 0 is default)
+
+Version 1.2.2.0:
+- added compatibility with Limited Daily Income to prevent HUD overlap
 
 Version 1.2.1.0: (the.geremy)
 - corrected error when weather has two icons and overlay will not adjust
@@ -66,7 +70,7 @@ Version 1.2.0.7: (the.geremy)
             <de><![CDATA[Feld]]></de>
             <en><![CDATA[Field]]></en>
             <cz><![CDATA[Pole]]></cz>
-        </text>        
+        </text>
         <text name="CH_supply">
             <de><![CDATA[Lieferung]]></de>
             <en><![CDATA[Supply]]></en>
