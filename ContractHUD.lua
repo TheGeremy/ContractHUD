@@ -102,8 +102,8 @@ function ContractHUD:draw()
 
 		local posX = gameInfoDisplay.backgroundOverlay.overlay.x
 		local posY = gameInfoDisplay.backgroundOverlay.overlay.y
-		local size = g_currentMission.inGameMenu.hud.inputHelp.helpTextSize * 1.1 -- add 10%
-		posY = posY + gameInfoDisplay.backgroundOverlay.overlay.height - size
+		local textSize = g_currentMission.inGameMenu.hud.inputHelp.helpTextSize * 1.1 -- add 10%
+		posY = posY + gameInfoDisplay.backgroundOverlay.overlay.height - textSize
 		posX = posX - ( g_currentMission.inGameMenu.hud.inputHelp.helpTextOffsetY * 2 )
 
 		if g_modIsLoaded.FS22_limitedDailyIncome then
@@ -111,6 +111,7 @@ function ContractHUD:draw()
 		end
 
 		local outputText = ContractHUD:translate("headline") .. ": " .. ContractHUD.activeMissons
+		local lineHeight = getTextHeight(textSize, outputText)
 		local completion = 0
 		local countContracts = 0
 
@@ -129,9 +130,9 @@ function ContractHUD:draw()
 		end
 
 		-- print haadline
-		ContractHUD:renderText(posX, posY, size, outputText, false, ContractHUD.HeadlineColor)--FSBaseMission.INGAME_NOTIFICATION_INFO) --ContractHUD.HeadlineColor)
-		maxTextWidth = getTextWidth(size, outputText)
-		posY = posY - size  -- shift one line down because of headline
+		ContractHUD:renderText(posX, posY, textSize, outputText, false, ContractHUD.HeadlineColor)--FSBaseMission.INGAME_NOTIFICATION_INFO) --ContractHUD.HeadlineColor)
+		maxTextWidth = getTextWidth(textSize, outputText)
+		posY = posY - textSize  -- shift one line down because of headline
 
 		for _, contract in ipairs(g_missionManager.missions) do
 			if contract.status >= 1 and g_currentMission.player.farmId == contract.farmId then  -- only show active contracts, 0 is inactive i guess, and only from current farm
@@ -305,28 +306,24 @@ function ContractHUD:draw()
 					end
 				end
 
-				ContractHUD:renderText(posX, posY, size, outputText, false, textColor)
+				ContractHUD:renderText(posX, posY, textSize, outputText, false, textColor)
 
-				posY = posY - size  -- shift one line down
+				posY = posY - textSize  -- shift one line down
 
 				-- handle counting
 				countContracts = countContracts + 1
 
 				-- get max width of the text
-				if maxTextWidth < getTextWidth(size, outputText)  then
-					maxTextWidth = getTextWidth(size, outputText)
+				if maxTextWidth < getTextWidth(textSize, outputText)  then
+					maxTextWidth = getTextWidth(textSize, outputText)
 				end
 			end
 		end
 
 		local overlayX = 0
 		local overlayY = 0
-		local overlayWidth = math.max(maxTextWidth + ContractHUD.horizontalMargin*2, ContractHUD.defaultOverlayWidth)
-		local overlayHeight = math.max(size * (countContracts + 1) + ContractHUD.verticalMargin + g_currentMission.inGameMenu.hud.inputHelp.helpTextOffsetY, ContractHUD.defaultOverlayHeight)
-
-		if overlayHeight < gameInfoDisplay.backgroundOverlay.overlay.height then
-			overlayHeight = gameInfoDisplay.backgroundOverlay.overlay.height
-		end
+		local overlayWidth = math.max(maxTextWidth + ContractHUD.horizontalMargin * 2, ContractHUD.defaultOverlayWidth)
+		local overlayHeight = math.max(textSize * (countContracts + 1) + ContractHUD.verticalMargin + g_currentMission.inGameMenu.hud.inputHelp.helpTextOffsetY, gameInfoDisplay.backgroundOverlay.overlay.height)
 
 		overlayX = baseX - overlayWidth + ContractHUD.horizontalMargin
 		overlayY = baseY - overlayHeight
