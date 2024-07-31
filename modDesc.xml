@@ -61,16 +61,19 @@ Version 1.2.0.7: (the.geremy)
 			<de><![CDATA[Contract HUD umschalten]]></de>
 			<en><![CDATA[Contract HUD toggle]]></en>
             <cz><![CDATA[Contract HUD režim]]></cz>
+            <ct><![CDATA[合約 HUD 切換]]></ct>
 		</text>
         <text name="CH_field">
             <de><![CDATA[Feld]]></de>
             <en><![CDATA[Field]]></en>
             <cz><![CDATA[Pole]]></cz>
+            <ct><![CDATA[田地]]></ct>
         </text>        
         <text name="CH_supply">
             <de><![CDATA[Lieferung]]></de>
             <en><![CDATA[Supply]]></en>
             <cz><![CDATA[Dodávka]]></cz>
+            <ct><![CDATA[供應]]></ct>
         </text>
 	</l10n>
 
